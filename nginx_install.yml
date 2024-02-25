@@ -1,0 +1,32 @@
+---
+- hosts: web
+  become: yes
+  vars_prompt:
+    - name: "ansible_become_password"
+      prompt: "Enter password for 'homework' user"
+      private: yes
+  vars:
+    default_index: "<h1>Bagyánszky Ákos</h1>"
+
+  tasks:
+    - name: "Install Nginx"
+      package:
+        name: nginx
+        state: present
+
+    - name: "Nginx auto-start"
+      service:
+        name: nginx
+        enabled: yes
+
+    - name: "Írja át az index.html fájlt"
+      template:
+        src: "index.j2"
+        dest: "/usr/share/nginx/html/index.html"
+      notify: "Restart Nginx"
+
+  handlers:
+  - name: "Restart Nginx"
+    service:
+      name: nginx
+      state: restarted
