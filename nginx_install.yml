@@ -1,0 +1,22 @@
+---
+- hosts: web
+  become: yes
+  vars:
+    - default_index: "<h1>Bagyánszky Ákos</h1>"
+
+  tasks:
+    - name: Install Nginx
+      package:
+        name: nginx
+        state: present
+
+    - name: Nginx auto-start
+      service:
+        name: nginx
+        enabled: yes
+
+    - name: Írja át az index.html fájlt
+      template:
+        src: shared/index.j2
+        dest: /usr/share/nginx/html/index.html
+      notify: Restart Nginx
